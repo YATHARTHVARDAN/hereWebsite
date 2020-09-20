@@ -105,45 +105,45 @@ searchForm.onsubmit = async (e) => {
 
 var results = document.getElementById('results');
 
-function categorySearch(category)
-{
-    if(posOfUser.locationEnabled==null || !posOfUser.locationEnabled)
-    {
-        await askForLocation();
-    }
-    else if(!posOfUser.locationEnabled)
-    {
-        posOfUser.lat = 28.7041;
-        posOfUser.long = 77.1025;
-        alert("Since the location was not enabled the default location i.e the location of the center point of new delhi is considered");
-    }
+// function categorySearch(category)
+// {
+//     if(posOfUser.locationEnabled==null || !posOfUser.locationEnabled)
+//     {
+//         await askForLocation();
+//     }
+//     else if(!posOfUser.locationEnabled)
+//     {
+//         posOfUser.lat = 28.7041;
+//         posOfUser.long = 77.1025;
+//         alert("Since the location was not enabled the default location i.e the location of the center point of new delhi is considered");
+//     }
 
-    let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=1&q='+category+'&in=countryCode:IND&apiKey='+apiKey,{
-        method='GET'
-    });
+//     let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=1&q='+category+'&in=countryCode:IND&apiKey='+apiKey,{
+//         method='GET'
+//     });
 
-    let results = await response.json();
-    console.log(results);
-    for(i = 0;i<results.length;i++)
-    {
-        generateResults(results.items[i]);
-    }
-}
+//     let results = await response.json();
+//     console.log(results);
+//     for(i = 0;i<results.length;i++)
+//     {
+//         generateResults(results.items[i]);
+//     }
+// }
 
-function askForLocation()
-{
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-      } else { 
-        alert("Geolocation is not supported by this browser");
-        posOfUser.locationEnabled = false;
-      }
-    function showPosition(position) {
-      posOfUser.lat = position.coords.latitude;
-      posOfUser.long = position.coords.longitude;
-      posOfUser.locationEnabled = true;
-    }
-}
+// function askForLocation()
+// {
+//     if (navigator.geolocation) {
+//         navigator.geolocation.getCurrentPosition(showPosition);
+//       } else { 
+//         alert("Geolocation is not supported by this browser");
+//         posOfUser.locationEnabled = false;
+//       }
+//     function showPosition(position) {
+//       posOfUser.lat = position.coords.latitude;
+//       posOfUser.long = position.coords.longitude;
+//       posOfUser.locationEnabled = true;
+//     }
+// }
 
 
 function generateResults(data)
