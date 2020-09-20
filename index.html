@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"type="text/javascript" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"type="text/javascript" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <link rel = "stylesheet" type="text/css" href="styles.css"/>
+</head>
+    <body>
+        <div id="cards">
+            <div class="results" id = "results">
+            </div>
+        </div>
+        <div class="leftNav">
+
+            <div class="leftNavHeading">
+                <img src="nav_images/tms.png" onclick="generateResults()" style="vertical-align: middle; width:95%;"/>
+            </div>
+            <div class="leftNavOpts2">
+                <img src="nav_images/6.png" style="vertical-align: middle; width:95%;">
+            </div>
+            <div class="leftNavOpts">
+                <img src="nav_images/1.png" class = "logo" style="vertical-align:middle;"/>
+                <span class="text" style="vertical-align:middle">Salons Nearby</span>
+            </div>
+            <div class="leftNavOpts">
+                <img src="nav_images/2.png" class = "logo" style="vertical-align:middle;"/>
+                <span class="text" style="vertical-align:middle">Chemists Nearby</span>
+            </div>
+            <div class="leftNavOpts">
+                <img src="nav_images/3.png" class = "logo" style="vertical-align:middle;"/>
+                <span class="text" style="vertical-align:middle">Grocery Stores Nearby</span>
+            </div>
+            <div class="leftNavOpts">
+                <img src="nav_images/4.png" class = "logo" style="vertical-align:middle;"/>
+                <span class="text" style="vertical-align:middle">Dairy Nearby</span>
+            </div>
+            <div class="leftNavOpts">
+                <img src="nav_images/5.png" class = "logo" style="vertical-align:middle;"/>
+                <span class="text" style="vertical-align:middle">Hospitals Nearby</span>
+            </div>
+            <div class="leftNavOpts">
+                <img src="nav_images/7.png" class = "logo" style="vertical-align:middle;"/>
+                <span class="text" style="vertical-align:middle">Repair Shops Nearby</span>
+            </div>
+        </div>
+        <div class="loading">
+            <img src="nav_images/loading.png"/>
+        </div>
+        <div id="search">
+            <div class="search_bar">
+                <form id = "searchForm" enctype="application/json">
+                    <div >
+                        <input type="text" class="consolas" id="searchText" required style="vertical-align: middle;" placeholder="Search Here"/>
+                <button type="submit" style="border-width: 0px; vertical-align: middle; background-color: transparent;"><img src="search.png" class="search"/></button>
+                    </div>
+                                </form>
+            </div>
+        </div>
+        
+        <div id="map">
+        </div>
+        <div id="suggestions">
+        </div>
+        <script src="script.js">
+        </script>
+    </body>
+</html>
