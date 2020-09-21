@@ -240,6 +240,7 @@ input[type="text"]
     width:90%;
     padding:0.5%;
     margin-left:7%;
+    white-space: normal;    
 }
 .card>.pom,.card>.header
 {
@@ -260,4 +261,11 @@ white-space: normal;
 ::-webkit-scrollbar
 {
     display:none
+}
+
+.cardLat{
+    display:none;
+}
+.cardLng{
+    display:none;
 }

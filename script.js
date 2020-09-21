@@ -105,7 +105,116 @@ searchForm.onsubmit = async (e) => {
 
 var results = document.getElementById('results');
 
-// function categorySearch(category)
+
+var salons = document.getElementById('salons');
+var chemists = document.getElementById('chemists');
+var grocery = document.getElementById('grocery');
+var dairy = document.getElementById('dairy');
+var hospital = document.getElementById('hospital');
+var repair = document.getElementById('repair');
+
+salons.onclick = async (e) => {
+    clearOutTheSuggestions('results');
+    posOfUser.lat = 28.7041;
+    posOfUser.long = 77.1025;
+    let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=salons&in=countryCode:IND&apiKey='+apiKey,{
+         method:'GET'
+     });
+
+     let results = await response.json();
+     console.log(results);
+     for(i = 0;i<results.items.length;i++)
+     {
+         generateResults(results.items[i]);
+     }
+
+}
+
+dairy.onclick = async (e) => {
+    clearOutTheSuggestions('results');
+    posOfUser.lat = 28.7041;
+    posOfUser.long = 77.1025;
+    let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=dairy&in=countryCode:IND&apiKey='+apiKey,{
+         method:'GET'
+     });
+
+     let results = await response.json();
+     console.log(results);
+     for(i = 0;i<results.items.length;i++)
+     {
+         generateResults(results.items[i]);
+     }
+
+}
+
+repair.onclick = async (e) => {
+    clearOutTheSuggestions('results');
+    posOfUser.lat = 28.7041;
+    posOfUser.long = 77.1025;
+    let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=repair&in=countryCode:IND&apiKey='+apiKey,{
+         method:'GET'
+     });
+
+     let results = await response.json();
+     console.log(results);
+     for(i = 0;i<results.items.length;i++)
+     {
+         generateResults(results.items[i]);
+     }
+
+}
+
+hospital.onclick = async (e) => {
+    clearOutTheSuggestions('results');
+    posOfUser.lat = 28.7041;
+    posOfUser.long = 77.1025;
+    let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=hospital&in=countryCode:IND&apiKey='+apiKey,{
+         method:'GET'
+     });
+
+     let results = await response.json();
+     console.log(results);
+     for(i = 0;i<results.items.length;i++)
+     {
+         generateResults(results.items[i]);
+     }
+
+}
+
+grocery.onclick = async (e) => {
+    clearOutTheSuggestions('results');
+    posOfUser.lat = 28.7041;
+    posOfUser.long = 77.1025;
+    let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=grocery&in=countryCode:IND&apiKey='+apiKey,{
+         method:'GET'
+     });
+
+     let results = await response.json();
+     console.log(results);
+     for(i = 0;i<results.items.length;i++)
+     {
+         generateResults(results.items[i]);
+     }
+
+}
+
+chemists.onclick = async (e) => {
+    clearOutTheSuggestions('results');
+    posOfUser.lat = 28.7041;
+    posOfUser.long = 77.1025;
+    let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=chemists&in=countryCode:IND&apiKey='+apiKey,{
+         method:'GET'
+     });
+
+     let results = await response.json();
+     console.log(results);
+     for(i = 0;i<results.items.length;i++)
+     {
+         generateResults(results.items[i]);
+     }
+
+}
+ //categorySearch(category)
 // {
 //     if(posOfUser.locationEnabled==null || !posOfUser.locationEnabled)
 //     {
@@ -146,6 +255,8 @@ var results = document.getElementById('results');
 // }
 
 
+
+
 function generateResults(data)
 {
     var element = document.createElement("div");
@@ -160,10 +271,22 @@ function generateResults(data)
     element4.textContent = data.address.countryName+", "+data.address.postalCode+", "+data.address.state;
     var element5 = document.createElement("div");
     element5.setAttribute("class","pom norwester");
-    element5.textContent = "Locate On Map 2";
+    element5.textContent = "Locate On Map";
+    var element6 = document.createElement("p");
+    element6.setAttribute("class","cardLat");
+    element6.textContent = data.position.lat;
+    var element7 = document.createElement("p");
+    element7.setAttribute("class","cardLng");
+    element7.textContent = data.position.lng;
+
+    element5.onclick = (e) => {
+        locateOnMap(element5.firstChild.textContent , element5.lastChild.textContent);
+    }
 
     element.appendChild(element2);
     element.appendChild(element4);
     element.appendChild(element5);
     results.appendChild(element);
+    element5.appendChild(element6);
+    element5.appendChild(element7);
 }
