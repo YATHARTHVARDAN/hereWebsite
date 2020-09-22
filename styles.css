@@ -269,3 +269,7 @@ white-space: normal;
 .cardLng{
     display:none;
 }
+
+.pom:hover{
+    cursor: pointer;
+}
