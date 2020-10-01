@@ -1,4 +1,3 @@
-const { url } = require("inspector");
 
 const apiKey = 'Yd-fnbk9FQ9yAsp35VV5rXMlCnMVJTS4eBk2f3wIkns';
 var n = 0;
