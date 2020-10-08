@@ -1,3 +1,15 @@
+var dataTodisplay;
+window.onload = async ()=>{
+    var dataLoader = document.getElementById('dataLoader');
+    dataLoader.style.display = "block";
+    let response = await fetch('https://scraperhere.herokuapp.com',{
+        method:'GET'
+    });
+
+    var result = await response.json();
+    console.log(result);
+    dataLoader.style.display = "none";
+}
 
 const apiKey = 'Yd-fnbk9FQ9yAsp35VV5rXMlCnMVJTS4eBk2f3wIkns';
 var n = 0;
