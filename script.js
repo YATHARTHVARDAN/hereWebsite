@@ -11,8 +11,6 @@ window.onload = async ()=>{
     dataLoader.style.display = "none";
 }
 
-console.log(dataTodisplay['North East Delhi']);
-
 const apiKey = 'Yd-fnbk9FQ9yAsp35VV5rXMlCnMVJTS4eBk2f3wIkns';
 var n = 0;
 
