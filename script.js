@@ -2,7 +2,7 @@ var dataTodisplay;
 window.onload = async ()=>{
     var dataLoader = document.getElementById('dataLoader');
     dataLoader.style.display = "block";
-    let response = await fetch('http://127.0.0.1:5000',{
+    let response = await fetch('https://scraperhere.herokuapp.com',{
         method:'GET'
     });
 
