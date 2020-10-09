@@ -9,14 +9,30 @@ var northWestDelhi = '<svg width="300" height="200" ' +
 '<circle cx="100" cy="100" r="10" '+
 'fill="black" />'+
 '</svg>';
-
+var result;
 window.onload = async ()=>{
     let response = await fetch('https://scraperhere.herokuapp.com',{
         method:'GET'
     });
-    var result = await response.json();
+    result = await response.json();
     console.log(result);
+    
+    // console.log('heres the data' + result.delhiTotal );
+    // var mainContainer = document.getElementsByClassName("table-data");
+    // mainContainer.innerHTML='TotalCases :'+result.delhiTotal+'<br>';
+
+    // appendData(result);
 }
+function appendData(data) {
+    var mainContainer = document.getElementById("table-data");
+    // for (var i = 0; i < data.length; i++) {
+    var div = document.createElement("pre");
+    mainContainer.innerHTML ='Total Cases in your locale '+data.delhiTotal;
+    // console.log('heres the data'+ result);
+    mainContainer.appendChild(div);
+    // }
+}
+
 const apiKey = 'Yd-fnbk9FQ9yAsp35VV5rXMlCnMVJTS4eBk2f3wIkns';
 var n = 0;
 
@@ -174,8 +190,7 @@ var repair = document.getElementById('repair');
 
 salons.onclick = async (e) => {
     clearOutTheSuggestions('results');
-    posOfUser.lat = 28.7041;
-    posOfUser.long = 77.1025;
+    checkForLocation();
     let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=100&q=salons&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
@@ -191,8 +206,7 @@ salons.onclick = async (e) => {
 
 dairy.onclick = async (e) => {
     clearOutTheSuggestions('results');
-    posOfUser.lat = 28.7041;
-    posOfUser.long = 77.1025;
+    checkForLocation();
     let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=dairy&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
@@ -208,8 +222,7 @@ dairy.onclick = async (e) => {
 
 repair.onclick = async (e) => {
     clearOutTheSuggestions('results');
-    posOfUser.lat = 28.7041;
-    posOfUser.long = 77.1025;
+    checkForLocation();
     let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=repair&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
@@ -225,8 +238,7 @@ repair.onclick = async (e) => {
 
 hospital.onclick = async (e) => {
     clearOutTheSuggestions('results');
-    posOfUser.lat = 28.7041;
-    posOfUser.long = 77.1025;
+    checkForLocation();
     let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=hospital&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
@@ -242,8 +254,7 @@ hospital.onclick = async (e) => {
 
 grocery.onclick = async (e) => {
     clearOutTheSuggestions('results');
-    posOfUser.lat = 28.7041;
-    posOfUser.long = 77.1025;
+    checkForLocation();
     let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=grocery&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
@@ -257,10 +268,10 @@ grocery.onclick = async (e) => {
 
 }
 
+
 chemists.onclick = async (e) => {
     clearOutTheSuggestions('results');
-    posOfUser.lat = 28.7041;
-    posOfUser.long = 77.1025;
+    checkForLocation();
     let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=chemists&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
@@ -273,7 +284,7 @@ chemists.onclick = async (e) => {
      }
 
 }
- //categorySearch(category)
+//categorySearch(category)
 // {
 //     if(posOfUser.locationEnabled==null || !posOfUser.locationEnabled)
 //     {
@@ -297,24 +308,38 @@ chemists.onclick = async (e) => {
 //         generateResults(results.items[i]);
 //     }
 // }
+function checkForLocation()
+{
+    if(posOfUser.locationEnabled==null)
+    {
+        alert("This app require Location.");
+        // posOfUser.locationEnabled = false;
+        askForLocation();
 
-// function askForLocation()
-// {
-//     if (navigator.geolocation) {
-//         navigator.geolocation.getCurrentPosition(showPosition);
-//       } else { 
-//         alert("Geolocation is not supported by this browser");
-//         posOfUser.locationEnabled = false;
-//       }
-//     function showPosition(position) {
-//       posOfUser.lat = position.coords.latitude;
-//       posOfUser.long = position.coords.longitude;
-//       posOfUser.locationEnabled = true;
-//     }
-// }
+        // if(posOfUser.locationEnabled==null){
+        // alert("location disabled redirecting to last known(Mumbai,Maharashtra)")
+        //     posOfUser.lat = 19.076090;
+        //     posOfUser.long = 72.877426;
+        // }
+    }
+}
+function askForLocation()
+{
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else { 
+        alert("Geolocation is not supported by this browser");
+        posOfUser.locationEnabled = false;
+      }
+    function showPosition(position) {
+      posOfUser.lat = position.coords.latitude;
+      posOfUser.long = position.coords.longitude;
+      posOfUser.locationEnabled = true;
+    }
+    console.log(posOfUser);
+}
 
-
-
+askForLocation();
 
 function generateResults(data)
 {
@@ -325,9 +350,11 @@ function generateResults(data)
     var element3 = document.createElement("p");
     element3.textContent = data.address.label;
     element2.appendChild(element3);
+
     var element4 = document.createElement("div");
     element4.setAttribute("class","address consolas");
     element4.textContent = data.address.countryName+", "+data.address.postalCode+", "+data.address.state;
+    
     var element5 = document.createElement("div");
     element5.setAttribute("class","pom norwester");
     element5.setAttribute("onclick","locateOnMap("+data.position.lat+","+data.position.lng+")");
