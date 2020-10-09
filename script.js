@@ -1,16 +1,22 @@
 var dataTodisplay;
+
+var markers = [];
+
+var northWestDelhi = '<svg width="300" height="200" ' +
+'xmlns="http://www.w3.org/2000/svg">' +
+'<circle cx="100" cy="100" r="50" ' +
+'fill="#DAF856" opacity="0.7" />'+
+'<circle cx="100" cy="100" r="10" '+
+'fill="black" />'+
+'</svg>';
+
 window.onload = async ()=>{
-    var dataLoader = document.getElementById('dataLoader');
-    dataLoader.style.display = "block";
     let response = await fetch('https://scraperhere.herokuapp.com',{
         method:'GET'
     });
-
     var result = await response.json();
     console.log(result);
-    dataLoader.style.display = "none";
 }
-
 const apiKey = 'Yd-fnbk9FQ9yAsp35VV5rXMlCnMVJTS4eBk2f3wIkns';
 var n = 0;
 
@@ -36,45 +42,51 @@ var ui = H.ui.UI.createDefault(map,mapTypes, 'en-US');
 var mapEvents = new H.mapevents.MapEvents(map);
 var behavior = new H.mapevents.Behavior(mapEvents);
 
-function locateOnMap(latitude , longitude,)
-{
-    var svgMarkup = '<svg width="24" height="24" ' +
+
+var svgMarkup = '<svg width="60" height="60" ' +
 'xmlns="http://www.w3.org/2000/svg">' +
 '<rect stroke="white" fill="#ffde58" x="1" y="1" width="22" ' +
 'height="22" /><text x="12" y="18" font-size="12pt" ' +
 'font-family="Cursive" font-weight="bold" text-anchor="middle" ' +
 'fill="white">S</text></svg>';
 
-var svg = 
-'<svg version="1.0" xmlns="http://www.w3.org/2000/svg" ' + 
-' width="500.000000pt" height="500.000000pt" viewBox="0 0 500.000000 500.000000" '+
-' preserveAspectRatio="xMidYMid meet">'+
-'<metadata>'+
-'Created by potrace 1.16, written by Peter Selinger 2001-2019' +
-'</metadata>'+
-'<g transform="translate(0.000000,500.000000) scale(0.100000,-0.100000)"'+
-'fill="#000000" stroke="none">'+
-'<path d="M2330 4989 c-246 -24 -516 -115 -728 -247 -432 -269 -714 -699 -793'+
-'-1212 -16 -106 -16 -379 0 -485 72 -462 311 -858 688 -1137 l81 -61 110 -211'+
-'c160 -306 321 -632 387 -780 94 -214 398 -810 430 -844 10 -11 33 27 123 205'+
-'60 120 121 245 135 279 13 33 170 353 348 710 l324 651 75 56 c370 274 610'+
-'674 681 1132 16 106 16 379 0 485 -56 364 -211 683 -459 942 -359 375 -879'+
-'567 -1402 517z m496 -64 c699 -143 1224 -701 1325 -1406 15 -106 15 -372 0'+
-'-464 -83 -504 -356 -921 -776 -1182 -296 -185 -662 -273 -1005 -243 -426 37'+
-'-771 199 -1066 502 -269 275 -421 596 -464 983 -69 617 217 1218 748 1574 189'+
-'127 476 231 722 261 128 15 379 4 516 -25z"/>'+
-'<path d="M2380 4849 c-621 -43 -1163 -464 -1363 -1059 -133 -394 -103 -829 83'+
-'-1200 213 -426 603 -727 1077 -832 84 -19 130 -22 323 -22 208 0 233 2 335 26'+
-'61 14 155 42 210 63 500 185 867 613 987 1151 19 84 22 130 22 309 0 180 -3'+
-'224 -22 312 -62 284 -180 522 -361 727 -327 371 -791 559 -1291 525z"/>'+
-'</g>'+
-'</svg>'
+var MarkForTheCenter = '<svg width="90" height="90" ' +
+'xmlns="http://www.w3.org/2000/svg">' +
+'<polygon poits="90,0 20,0 20,80 30,80 0,90 40,80 90,80" />'
+'height="22" /><text x="12" y="18" font-size="12pt" ' +
+'font-family="Cursive" font-weight="bold" text-anchor="middle" ' +
+'fill="white"></text></svg>'
+
+function locateOnMap(latitude , longitude, category)
+{
+    var svgMarkup = '<svg width="100" height="200" ' +
+'xmlns="http://www.w3.org/2000/svg">' +
+'<polygon points="25,80 50,170 75,80" class="triangle" fill="red"/>'+
+'<circle cx="50" cy="100" r="24" '+
+'fill="red" />'+
+'<circle cx="50" cy="100" r="10" '+
+'fill="#7CECE3" />'+
+'</svg>';
+
+
 
     var icon = new H.map.Icon(svgMarkup),
     coords = {lat: latitude, lng: longitude},
     marker = new H.map.Marker(coords, {icon: icon});
     map.addObject(marker);
+    markers.push(marker);
 }
+
+var overlay = new H.map.Overlay(
+    new H.geo.Rect(
+      70.72849153520343, -24.085683364175395,
+      29.569664922291, 44.216452317817016
+    ),
+    'https://heremaps.github.io/maps-api-for-javascript-examples/image-overlay/data/0.png'
+  );
+  
+  // add overlay to the map
+  map.addObject(overlay);
 
 var mapSettings = ui.getControl('mapsettings');
 var zoom = ui.getControl('zoom');
@@ -110,6 +122,14 @@ function clearOutTheSuggestions(id)
     let element = document.getElementById(id);
     while (element.firstChild) {
     element.removeChild(element.firstChild);
+    }
+
+    if(markers.length>0)
+    {
+        for(var i = 0;i<markers.length;i++)
+        {
+            map.removeObject(markers[i]);
+        }
     }
 }
 
@@ -156,7 +176,7 @@ salons.onclick = async (e) => {
     clearOutTheSuggestions('results');
     posOfUser.lat = 28.7041;
     posOfUser.long = 77.1025;
-    let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=salons&in=countryCode:IND&apiKey='+apiKey,{
+    let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=100&q=salons&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
 
