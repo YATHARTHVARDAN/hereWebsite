@@ -9,20 +9,31 @@ var northWestDelhi = '<svg width="300" height="200" ' +
 '<circle cx="100" cy="100" r="10" '+
 'fill="black" />'+
 '</svg>';
-
+var result;
 window.onload = async ()=>{
-// <<<<<<< HEAD
-//     var dataLoader = document.getElementById('dataLoader');
-//     dataLoader.style.display = "block";
-
-// =======
-// >>>>>>> 30a1443c5ac8dc41d16fd27584e72aab7d067457
     let response = await fetch('https://scraperhere.herokuapp.com',{
         method:'GET'
     });
-    var result = await response.json();
+    result = await response.json();
     console.log(result);
+    
+    //covid wala part
+    // console.log('heres the data' + result.delhiTotal );
+    // var mainContainer = document.getElementsByClassName("table-data");
+    // mainContainer.innerHTML='TotalCases :'+result.delhiTotal+'<br>';
+
+    // appendData(result);
 }
+// function appendData(data) {
+//     var mainContainer = document.getElementById("table-data");
+//     // for (var i = 0; i < data.length; i++) {
+//     // var div = document.createElement("div");
+//     // mainContainer.innerHTML = data;
+//     // console.log('heres the data'+ result);
+//     // mainContainer.appendChild(div);
+//     // }
+// }
+
 const apiKey = 'Yd-fnbk9FQ9yAsp35VV5rXMlCnMVJTS4eBk2f3wIkns';
 var n = 0;
 
@@ -302,14 +313,15 @@ function checkForLocation()
 {
     if(posOfUser.locationEnabled==null)
     {
-        alert("Geolocation is not supported by this browser.");
+        alert("This app require Location.");
         // posOfUser.locationEnabled = false;
-        async(e)=> askForLocation();
-        if(posOfUser.locationEnabled==null){
-        alert("location disabled redirecting to last known(Mumbai,Maharashtra)")
-            posOfUser.lat = 19.076090;
-            posOfUser.long = 72.877426;
-        }
+        askForLocation();
+
+        // if(posOfUser.locationEnabled==null){
+        // alert("location disabled redirecting to last known(Mumbai,Maharashtra)")
+        //     posOfUser.lat = 19.076090;
+        //     posOfUser.long = 72.877426;
+        // }
     }
 }
 function askForLocation()
