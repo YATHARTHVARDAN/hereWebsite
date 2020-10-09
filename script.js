@@ -17,22 +17,21 @@ window.onload = async ()=>{
     result = await response.json();
     console.log(result);
     
-    //covid wala part
     // console.log('heres the data' + result.delhiTotal );
     // var mainContainer = document.getElementsByClassName("table-data");
     // mainContainer.innerHTML='TotalCases :'+result.delhiTotal+'<br>';
 
     // appendData(result);
 }
-// function appendData(data) {
-//     var mainContainer = document.getElementById("table-data");
-//     // for (var i = 0; i < data.length; i++) {
-//     // var div = document.createElement("div");
-//     // mainContainer.innerHTML = data;
-//     // console.log('heres the data'+ result);
-//     // mainContainer.appendChild(div);
-//     // }
-// }
+function appendData(data) {
+    var mainContainer = document.getElementById("table-data");
+    // for (var i = 0; i < data.length; i++) {
+    var div = document.createElement("pre");
+    mainContainer.innerHTML ='Total Cases in your locale '+data.delhiTotal;
+    // console.log('heres the data'+ result);
+    mainContainer.appendChild(div);
+    // }
+}
 
 const apiKey = 'Yd-fnbk9FQ9yAsp35VV5rXMlCnMVJTS4eBk2f3wIkns';
 var n = 0;
