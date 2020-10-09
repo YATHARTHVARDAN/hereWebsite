@@ -11,6 +11,12 @@ var northWestDelhi = '<svg width="300" height="200" ' +
 '</svg>';
 
 window.onload = async ()=>{
+// <<<<<<< HEAD
+//     var dataLoader = document.getElementById('dataLoader');
+//     dataLoader.style.display = "block";
+
+// =======
+// >>>>>>> 30a1443c5ac8dc41d16fd27584e72aab7d067457
     let response = await fetch('https://scraperhere.herokuapp.com',{
         method:'GET'
     });
@@ -174,8 +180,7 @@ var repair = document.getElementById('repair');
 
 salons.onclick = async (e) => {
     clearOutTheSuggestions('results');
-    posOfUser.lat = 28.7041;
-    posOfUser.long = 77.1025;
+    checkForLocation();
     let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=100&q=salons&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
@@ -191,8 +196,7 @@ salons.onclick = async (e) => {
 
 dairy.onclick = async (e) => {
     clearOutTheSuggestions('results');
-    posOfUser.lat = 28.7041;
-    posOfUser.long = 77.1025;
+    checkForLocation();
     let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=dairy&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
@@ -208,8 +212,7 @@ dairy.onclick = async (e) => {
 
 repair.onclick = async (e) => {
     clearOutTheSuggestions('results');
-    posOfUser.lat = 28.7041;
-    posOfUser.long = 77.1025;
+    checkForLocation();
     let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=repair&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
@@ -225,8 +228,7 @@ repair.onclick = async (e) => {
 
 hospital.onclick = async (e) => {
     clearOutTheSuggestions('results');
-    posOfUser.lat = 28.7041;
-    posOfUser.long = 77.1025;
+    checkForLocation();
     let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=hospital&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
@@ -242,8 +244,7 @@ hospital.onclick = async (e) => {
 
 grocery.onclick = async (e) => {
     clearOutTheSuggestions('results');
-    posOfUser.lat = 28.7041;
-    posOfUser.long = 77.1025;
+    checkForLocation();
     let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=grocery&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
@@ -257,10 +258,10 @@ grocery.onclick = async (e) => {
 
 }
 
+
 chemists.onclick = async (e) => {
     clearOutTheSuggestions('results');
-    posOfUser.lat = 28.7041;
-    posOfUser.long = 77.1025;
+    checkForLocation();
     let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=chemists&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
@@ -273,7 +274,7 @@ chemists.onclick = async (e) => {
      }
 
 }
- //categorySearch(category)
+//categorySearch(category)
 // {
 //     if(posOfUser.locationEnabled==null || !posOfUser.locationEnabled)
 //     {
@@ -297,24 +298,37 @@ chemists.onclick = async (e) => {
 //         generateResults(results.items[i]);
 //     }
 // }
+function checkForLocation()
+{
+    if(posOfUser.locationEnabled==null)
+    {
+        alert("Geolocation is not supported by this browser.");
+        // posOfUser.locationEnabled = false;
+        async(e)=> askForLocation();
+        if(posOfUser.locationEnabled==null){
+        alert("location disabled redirecting to last known(Mumbai,Maharashtra)")
+            posOfUser.lat = 19.076090;
+            posOfUser.long = 72.877426;
+        }
+    }
+}
+function askForLocation()
+{
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else { 
+        alert("Geolocation is not supported by this browser");
+        posOfUser.locationEnabled = false;
+      }
+    function showPosition(position) {
+      posOfUser.lat = position.coords.latitude;
+      posOfUser.long = position.coords.longitude;
+      posOfUser.locationEnabled = true;
+    }
+    console.log(posOfUser);
+}
 
-// function askForLocation()
-// {
-//     if (navigator.geolocation) {
-//         navigator.geolocation.getCurrentPosition(showPosition);
-//       } else { 
-//         alert("Geolocation is not supported by this browser");
-//         posOfUser.locationEnabled = false;
-//       }
-//     function showPosition(position) {
-//       posOfUser.lat = position.coords.latitude;
-//       posOfUser.long = position.coords.longitude;
-//       posOfUser.locationEnabled = true;
-//     }
-// }
-
-
-
+askForLocation();
 
 function generateResults(data)
 {
@@ -325,9 +339,11 @@ function generateResults(data)
     var element3 = document.createElement("p");
     element3.textContent = data.address.label;
     element2.appendChild(element3);
+
     var element4 = document.createElement("div");
     element4.setAttribute("class","address consolas");
     element4.textContent = data.address.countryName+", "+data.address.postalCode+", "+data.address.state;
+    
     var element5 = document.createElement("div");
     element5.setAttribute("class","pom norwester");
     element5.setAttribute("onclick","locateOnMap("+data.position.lat+","+data.position.lng+")");
