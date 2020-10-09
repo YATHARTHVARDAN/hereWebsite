@@ -144,7 +144,12 @@ function clearOutTheSuggestions(id)
     {
         for(var i = 0;i<markers.length;i++)
         {
+            try{
             map.removeObject(markers[i]);
+            }
+            catch(error){
+                console.log(error);
+            }
         }
     }
 }
