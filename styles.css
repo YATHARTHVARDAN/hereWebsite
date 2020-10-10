@@ -51,7 +51,15 @@ body{
 
 .leftNavOpts :hover, .leftNavOpts2:hover{
     cursor: pointer;
+    /* color: lightseagreen; */
+    color: lightskyblue;
 }
+
+.leftNavOpts2:active{
+    cursor: pointer;
+    color: lightskyblue;
+}
+
 .leftNavHeading{
     margin-top:4%;
     margin-bottom:4%;
@@ -240,7 +248,7 @@ input[type="text"]
     display:inline-block;
 
 }
-.card>.address,.card>.pom,.card>.header
+.card>.address,.card>.pom,.card>.header,.card>.dist
 {
     width:90%;
     padding:0.5%;

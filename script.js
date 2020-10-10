@@ -2,6 +2,7 @@ var dataTodisplay;
 
 var markers = [];
 
+
 var northWestDelhi = '<svg width="300" height="200" ' +
 'xmlns="http://www.w3.org/2000/svg">' +
 '<circle cx="100" cy="100" r="50" ' +
@@ -10,27 +11,33 @@ var northWestDelhi = '<svg width="300" height="200" ' +
 'fill="black" />'+
 '</svg>';
 var result;
-window.onload = async ()=>{
-    let response = await fetch('https://scraperhere.herokuapp.com',{
-        method:'GET'
-    });
-    result = await response.json();
-    console.log(result);
+/* Covid info scraper function */
+// window.onload = async ()=>{
+//     let response = await fetch('https://scraperhere.herokuapp.com',{
+//         method:'GET'
+//     });
+//     result = await response.json();
+//     console.log(result);
     
-    // console.log('heres the data' + result.delhiTotal );
-    // var mainContainer = document.getElementsByClassName("table-data");
-    // mainContainer.innerHTML='TotalCases :'+result.delhiTotal+'<br>';
+//     // console.log('heres the data' + result.delhiTotal );
+//     // var mainContainer = document.getElementsByClassName("table-data");
+//     // mainContainer.innerHTML='TotalCases :'+result.delhiTotal+'<br>';
 
-    // appendData(result);
-}
-function appendData(data) {
-    var mainContainer = document.getElementById("table-data");
-    // for (var i = 0; i < data.length; i++) {
-    var div = document.createElement("pre");
-    mainContainer.innerHTML ='Total Cases in your locale '+data.delhiTotal;
-    // console.log('heres the data'+ result);
-    mainContainer.appendChild(div);
-    // }
+//     // appendData(result);
+// }
+// function appendData(data) {
+//     var mainContainer = document.getElementById("table-data");
+//     // for (var i = 0; i < data.length; i++) {
+//     var div = document.createElement("pre");
+//     mainContainer.innerHTML ='Total Cases in your locale '+data.delhiTotal;
+//     // console.log('heres the data'+ result);
+//     mainContainer.appendChild(div);
+//     // }
+// }
+// callOut();
+
+function callOut() {
+    alert("There Maps Local Essential Service Finder Tool. Allow Location");
 }
 
 const apiKey = 'Yd-fnbk9FQ9yAsp35VV5rXMlCnMVJTS4eBk2f3wIkns';
@@ -78,6 +85,26 @@ function locateOnMap(latitude , longitude, category)
     var svgMarkup = '<svg width="100" height="200" ' +
 'xmlns="http://www.w3.org/2000/svg">' +
 '<polygon points="25,80 50,170 75,80" class="triangle" fill="red"/>'+
+'<circle cx="50" cy="100" r="24" '+
+'fill="red" />'+
+'<circle cx="50" cy="100" r="10" '+
+'fill="#7CECE3" />'+
+'</svg>';
+
+
+
+    var icon = new H.map.Icon(svgMarkup),
+    coords = {lat: latitude, lng: longitude},
+    marker = new H.map.Marker(coords, {icon: icon});
+    map.addObject(marker);
+    markers.push(marker);
+}
+
+function locateOnMap2(latitude , longitude, category)
+{
+    var svgMarkup = '<svg width="100" height="200" ' +
+'xmlns="http://www.w3.org/2000/svg">' +
+// '<polygon points="25,80 50,170 75,80" class="triangle" fill="red"/>'+
 '<circle cx="50" cy="100" r="24" '+
 'fill="red" />'+
 '<circle cx="50" cy="100" r="10" '+
@@ -180,7 +207,6 @@ searchForm.onsubmit = async (e) => {
 
 var results = document.getElementById('results');
 
-
 var salons = document.getElementById('salons');
 var chemists = document.getElementById('chemists');
 var grocery = document.getElementById('grocery');
@@ -191,7 +217,7 @@ var repair = document.getElementById('repair');
 salons.onclick = async (e) => {
     clearOutTheSuggestions('results');
     checkForLocation();
-    let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=100&q=salons&in=countryCode:IND&apiKey='+apiKey,{
+    let response  = await fetch('https://discover.search.hereapi.com/v1/discover?at='+posOfUser.lat+','+posOfUser.long+'&limit=10&q=salons&in=countryCode:IND&apiKey='+apiKey,{
          method:'GET'
      });
 
@@ -323,6 +349,7 @@ function checkForLocation()
         // }
     }
 }
+
 function askForLocation()
 {
     if (navigator.geolocation) {
@@ -355,13 +382,20 @@ function generateResults(data)
     element4.setAttribute("class","address consolas");
     element4.textContent = data.address.countryName+", "+data.address.postalCode+", "+data.address.state;
     
+    var element6 =document.createElement("div");
+    element6.setAttribute("class","dist");
+    element6.textContent = "Distance: "+data.distance;
+
     var element5 = document.createElement("div");
     element5.setAttribute("class","pom norwester");
     element5.setAttribute("onclick","locateOnMap("+data.position.lat+","+data.position.lng+")");
     element5.textContent = "Locate On Map";
 
+    locateOnMap2(data.position.lat,data.position.lng);
+
     element.appendChild(element2);
     element.appendChild(element4);
+    element.appendChild(element6);
     element.appendChild(element5);
     results.appendChild(element);
 }
