@@ -285,4 +285,13 @@ white-space: normal;
 
 .pom:hover{
     cursor: pointer;
+    color: lightskyblue;
+
+}
+
+.card:hover{
+    /* height: 102%; */
+    cursor: pointer;
+    color: lightskyblue;
+    
 }

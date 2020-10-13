@@ -495,7 +495,7 @@ function addDraggableMarker(map, behavior) {
       posOfUser.lat = capturedLat;
       posOfUser.long = capturedLng;
       posOfUser.locationEnabled = true;
-
+    //   clearOutTheSuggestions('results');
       if (target instanceof H.map.Marker) {
         // re-enable the default draggability of the underlying map
         behavior.enable();
@@ -527,16 +527,15 @@ function generateResults(data) {
 
   var element6 = document.createElement('div');
   element6.setAttribute('class', 'dist');
-  element6.textContent = 'Distance: ' + data.distance;
+  element6.textContent = 'Distance: ' + data.distance +' m';
 
   var element5 = document.createElement('div');
   element5.setAttribute('class', 'pom norwester');
-  element5.setAttribute(
+  element.setAttribute(
     'onclick',
     'locateOnMap(' + data.position.lat + ',' + data.position.lng + ')'
   );
   element5.textContent = 'Locate On Map';
-
   markPoints(data.position.lat, data.position.lng);
 
   element.appendChild(element2);
