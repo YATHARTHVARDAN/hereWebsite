@@ -90,9 +90,6 @@ function locateOnMap(latitude , longitude, category)
 '<circle cx="50" cy="100" r="10" '+
 'fill="#7CECE3" />'+
 '</svg>';
-
-
-
     var icon = new H.map.Icon(svgMarkup),
     coords = {lat: latitude, lng: longitude},
     marker = new H.map.Marker(coords, {icon: icon});
