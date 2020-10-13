@@ -82,11 +82,18 @@ var MarkForTheCenter =
   'fill="white"></text></svg>';
 
 function locateOnMap(latitude, longitude, category) {
-  if (markers.length > 0) {
-    for (var i = 0; i < markers.length; i++) {
-      map.removeObject(markers[i]);
+    if(markers.length>0)
+    {
+        for(var i = 0;i<markers.length;i++)
+        {
+            try{
+            map.removeObject(markers[i]);
+            }
+            catch(error){
+                console.log(error);
+            }
+        }
     }
-  }
 
   var svgMarkup =
     '<svg width="100" height="200" ' +
@@ -167,14 +174,19 @@ function clearOutTheSuggestions(id) {
   while (element.firstChild) {
     element.removeChild(element.firstChild);
   }
-
-  if (markers.length > 0) {
-    for (var i = 0; i < markers.length; i++) {
-      map.removeObject(markers[i]);
+    if(markers.length>0)
+    {
+        for(var i = 0;i<markers.length;i++)
+        {
+            try{
+            map.removeObject(markers[i]);
+            }
+            catch(error){
+                console.log(error);
+            }
+        }
     }
-  }
 }
-
 var searchForm = document.getElementById('searchForm');
 
 searchForm.onsubmit = async (e) => {
