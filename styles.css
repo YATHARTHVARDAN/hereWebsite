@@ -51,7 +51,15 @@ body{
 
 .leftNavOpts :hover, .leftNavOpts2:hover{
     cursor: pointer;
+    /* color: lightseagreen; */
+    color: lightskyblue;
 }
+
+.leftNavOpts2:active{
+    cursor: pointer;
+    color: lightskyblue;
+}
+
 .leftNavHeading{
     margin-top:4%;
     margin-bottom:4%;
@@ -240,7 +248,7 @@ input[type="text"]
     display:inline-block;
 
 }
-.card>.address,.card>.pom,.card>.header
+.card>.address,.card>.pom,.card>.header,.card>.dist
 {
     width:90%;
     padding:0.5%;
@@ -277,6 +285,17 @@ white-space: normal;
 
 .pom:hover{
     cursor: pointer;
+<<<<<<< HEAD
+    color: lightskyblue;
+
+}
+
+.card:hover{
+    /* height: 102%; */
+    cursor: pointer;
+    color: lightskyblue;
+    
+=======
 }
 
 .autoSuggest
@@ -307,4 +326,5 @@ white-space: normal;
     border-width:5px;
     border-color:black;
     cursor: pointer;
+>>>>>>> dcc4f743dd023012dd119282365663ddcaaf4000
 }
