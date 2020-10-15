@@ -278,3 +278,33 @@ white-space: normal;
 .pom:hover{
     cursor: pointer;
 }
+
+.autoSuggest
+{
+    background-color:rgba(255, 255, 255, 0.609);
+    color:rgba(0, 0, 0, 0.835);
+    font-size:110%;
+    text-align:left;
+    width:100%;
+}
+.autoSuggest > p
+{
+    margin-top:0px;
+    margin-bottom:0px;
+    width:100%;
+    padding:1%;
+    border-color:rgba(0, 0, 0, 0.609);
+    border-top-width:0;
+    border-bottom-width:3px;
+    border-right-width:3px;
+    border-left-width:3px;
+}
+
+.autoSuggest > p:hover
+{
+    color:black;
+    background-color:white;
+    border-width:5px;
+    border-color:black;
+    cursor: pointer;
+}

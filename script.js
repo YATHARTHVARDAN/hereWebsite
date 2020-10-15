@@ -43,7 +43,9 @@ var posOfUser = {
 };
 
 var platform = new H.service.Platform({
-    'apikey': apiKey
+    'apikey': apiKey,
+    useCIT: false,
+    useHTTPS: true
 });
 var mapTypes = platform.createDefaultLayers();
 var map = new H.Map(
@@ -57,6 +59,30 @@ var map = new H.Map(
 var ui = H.ui.UI.createDefault(map,mapTypes, 'en-US'); 
 var mapEvents = new H.mapevents.MapEvents(map);
 var behavior = new H.mapevents.Behavior(mapEvents);
+
+
+var defaultLayers = platform.createDefaultLayers();
+var geocoder = platform.getGeocodingService();
+var group = new H.map.Group();
+
+group.addEventListener('tap', function (evt) {
+    map.setCenter(evt.target.getGeometry());
+    openBubble(
+        evt.target.getGeometry(), evt.target.getData());
+}, false);
+
+
+//Step 2: initialize a map - this map is centered over Europe
+
+map.addObject(group);
+
+//Step 3: make the map interactive
+// MapEvents enables the event system
+// Behavior implements default interactions for pan/zoom (also on mobile touch environments)
+// var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+
+// Create the default UI components
+
 
 
 var svgMarkup = '<svg width="60" height="60" ' +
@@ -83,26 +109,12 @@ function locateOnMap(latitude , longitude, category)
 '<circle cx="50" cy="100" r="10" '+
 'fill="#7CECE3" />'+
 '</svg>';
-
-
-
     var icon = new H.map.Icon(svgMarkup),
     coords = {lat: latitude, lng: longitude},
     marker = new H.map.Marker(coords, {icon: icon});
     map.addObject(marker);
     markers.push(marker);
 }
-
-var overlay = new H.map.Overlay(
-    new H.geo.Rect(
-      70.72849153520343, -24.085683364175395,
-      29.569664922291, 44.216452317817016
-    ),
-    'https://heremaps.github.io/maps-api-for-javascript-examples/image-overlay/data/0.png'
-  );
-  
-  // add overlay to the map
-  map.addObject(overlay);
 
 var mapSettings = ui.getControl('mapsettings');
 var zoom = ui.getControl('zoom');
@@ -370,3 +382,219 @@ function generateResults(data)
     element.appendChild(element5);
     results.appendChild(element);
 }
+
+var AUTOCOMPLETION_URL = 'https://autocomplete.geocoder.ls.hereapi.com/6.2/suggest.json',
+    ajaxRequest = new XMLHttpRequest(),
+    query = '';
+
+/**
+ * If the text in the text box  has changed, and is not empty,
+ * send a geocoding auto-completion request to the server.
+ *
+ * @param {Object} textBox the textBox DOM object linked to this event
+ * @param {Object} event the DOM event which fired this listener
+ */
+function autoCompleteListener(textBox, event) {
+
+    if (query != textBox.value){
+        if (textBox.value.length >= 1){
+
+            /**
+             * A full list of available request parameters can be found in the Geocoder Autocompletion
+             * API documentation.
+             *
+             */
+            var params = '?' +
+                'query=' +  encodeURIComponent(textBox.value) +   // The search text which is the basis of the query
+                '&beginHighlight=' + encodeURIComponent('') + //  Mark the beginning of the match in a token.
+                '&endHighlight=' + encodeURIComponent('') + //  Mark the end of the match in a token.
+                '&maxresults=5' +  // The upper limit the for number of suggestions to be included
+                // in the response.  Default is set to 5.
+                '&apikey=' + apiKey;
+            ajaxRequest.open('GET', AUTOCOMPLETION_URL + params );
+            ajaxRequest.send();
+        }
+    }
+    query = textBox.value;
+}
+
+
+/**
+ *  This is the event listener which processes the XMLHttpRequest response returned from the server.
+ */
+function onAutoCompleteSuccess() {
+    /*
+     * The styling of the suggestions response on the map is entirely under the developer's control.
+     * A representitive styling can be found the full JS + HTML code of this example
+     * in the functions below:
+     */
+    clearOldSuggestions();
+    addSuggestionsToPanel(this.response);  // In this context, 'this' means the XMLHttpRequest itself.
+    addSuggestionsToMap(this.response);
+}
+
+
+/**
+ * This function will be called if a communication error occurs during the XMLHttpRequest
+ */
+function onAutoCompleteFailed() {
+    alert('Ooops!');
+}
+
+// Attach the event listeners to the XMLHttpRequest object
+ajaxRequest.addEventListener("load", onAutoCompleteSuccess);
+ajaxRequest.addEventListener("error", onAutoCompleteFailed);
+ajaxRequest.responseType = "json";
+
+
+/**
+ * Boilerplate map initialization code starts below:
+ */
+
+
+var bubble;
+
+/**
+ * Function to Open/Close an infobubble on the map.
+ * @param  {H.geo.Point} position     The location on the map.
+ * @param  {String} text              The contents of the infobubble.
+ */
+function openBubble(position, text){
+    if(!bubble){
+        bubble =  new H.ui.InfoBubble(
+            position,
+            // The FO property holds the province name.
+            {content: '<small>' + text+ '</small>'});
+        ui.addBubble(bubble);
+    } else {
+        bubble.setPosition(position);
+        bubble.setContent('<small>' + text+ '</small>');
+        bubble.open();
+    }
+}
+
+
+/**
+ * The Geocoder Autocomplete API response retrieves a complete addresses and a `locationId`.
+ * for each suggestion.
+ *
+ * You can subsequently use the Geocoder API to geocode the address based on the ID and
+ * thus obtain the geographic coordinates of the address.
+ *
+ * For demonstration purposes only, this function makes a geocoding request
+ * for every `locationId` found in the array of suggestions and displays it on the map.
+ *
+ * A more typical use-case would only make a single geocoding request - for example
+ * when the user has selected a single suggestion from a list.
+ *
+ * @param {Object} response
+ */
+function addSuggestionsToMap(response){
+    /**
+     * This function will be called once the Geocoder REST API provides a response
+     * @param  {Object} result          A JSONP object representing the  location(s) found.
+     */
+    var onGeocodeSuccess = function (result) {
+            var marker,
+                locations = result.Response.View[0].Result,
+                i;
+
+            // Add a marker for each location found
+            for (i = 0; i < locations.length; i++) {
+                marker = new H.map.Marker({
+                    lat : locations[i].Location.DisplayPosition.Latitude,
+                    lng : locations[i].Location.DisplayPosition.Longitude
+                });
+                marker.setData(locations[i].Location.Address.Label);
+                group.addObject(marker);
+            }
+
+            map.getViewModel().setLookAtData({
+                bounds: group.getBoundingBox()
+            });
+            if(group.getObjects().length < 2){
+                map.setZoom(15);
+            }
+        },
+        /**
+         * This function will be called if a communication error occurs during the JSON-P request
+         * @param  {Object} error  The error message received.
+         */
+        onGeocodeError = function (error) {
+            alert('Ooops!');
+        },
+        /**
+         * This function uses the geocoder service to calculate and display information
+         * about a location based on its unique `locationId`.
+         *
+         * A full list of available request parameters can be found in the Geocoder API documentation.
+         * see: http://developer.here.com/rest-apis/documentation/geocoder/topics/resource-search.html
+         *
+         * @param {string} locationId    The id assigned to a given location
+         */
+        geocodeByLocationId = function (locationId) {
+            geocodingParameters = {
+                locationId : locationId
+            };
+
+            geocoder.geocode(
+                geocodingParameters,
+                onGeocodeSuccess,
+                onGeocodeError
+            );
+        }
+
+    /*
+     * Loop through all the geocoding suggestions and make a request to the geocoder service
+     * to find out more information about them.
+     */
+
+    response.suggestions.forEach(function (item, index, array) {
+        geocodeByLocationId(item.locationId);
+    });
+}
+
+
+/**
+ * Removes all H.map.Marker points from the map and adds closes the info bubble
+ */
+function clearOldSuggestions(){
+    group.removeAll ();
+    if(bubble){
+        bubble.close();
+    }
+}
+
+/**
+ * Format the geocoding autocompletion repsonse object's data for display
+ *
+ * @param {Object} response
+ */
+function addSuggestionsToPanel(response){
+    let result = response.suggestions;
+    console.log(result);
+    var panel = document.getElementById('autoSuggest');
+     while(panel.firstChild)
+     {
+         panel.removeChild(panel.firstChild);
+     }
+
+     for(var i = 0;i<result.length;i++)
+     {
+        var stringToParse = result[i].label; 
+        
+        var para = document.createElement("p");
+        para.innerText = stringToParse;
+         panel.appendChild(para);
+     }
+}
+
+
+
+var content =  '<strong style="font-size: large;">' + 'Geocoding Autocomplete'  + '</strong></br>';
+
+content  += '<br/><input type="text" id="auto-complete" style="margin-left:5%; margin-right:5%; min-width:90%"  onkeyup="return autoCompleteListener(this, event);"><br/>';
+content  += '<br/><strong>Response:</strong><br/>';
+content  += '<div style="margin-left:5%; margin-right:5%;"><pre style="max-height:235px"><code  id="suggestions" style="font-size: small;">' +'{}' + '</code></pre></div>';
+
+// suggestionsContainer.innerHTML = content;
