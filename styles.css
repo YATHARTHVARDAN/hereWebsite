@@ -285,7 +285,6 @@ white-space: normal;
 
 .pom:hover{
     cursor: pointer;
-<<<<<<< HEAD
     color: lightskyblue;
 
 }
@@ -295,7 +294,6 @@ white-space: normal;
     cursor: pointer;
     color: lightskyblue;
     
-=======
 }
 
 .autoSuggest
@@ -326,5 +324,4 @@ white-space: normal;
     border-width:5px;
     border-color:black;
     cursor: pointer;
->>>>>>> dcc4f743dd023012dd119282365663ddcaaf4000
 }
