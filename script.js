@@ -165,18 +165,6 @@ function markPoints(latitude, longitude, category) {
   markers.push(marker);
 }
 
-var overlay = new H.map.Overlay(
-  new H.geo.Rect(
-    70.72849153520343,
-    -24.085683364175395,
-    29.569664922291,
-    44.216452317817016
-  ),
-  'https://heremaps.github.io/maps-api-for-javascript-examples/image-overlay/data/0.png'
-);
-
-// add overlay to the map
-map.addObject(overlay);
 
 // =======
 // var MarkForTheCenter = '<svg width="90" height="90" ' +
