@@ -464,14 +464,30 @@ askForLocation();
 
 function addDraggableMarker(map, behavior) {
   // Step 2: Set up a marker and make it volatile and draggable
-  var marker = new H.map.Marker(
-    { lat: 28.7041, lng: 77.10251 },
-    {
-      // mark the object as volatile for the smooth dragging
-      volatility: true,
-    }
-  );
-
+  if(posOfUser.locationEnabled==null)
+  {
+    var marker = new H.map.Marker(
+      { 
+          lat: 28.7041, lng: 77.10251 
+      },
+      {
+        // mark the object as volatile for the smooth dragging
+        volatility: true,
+      }
+    );
+  }
+  else
+  {
+    var marker = new H.map.Marker(
+      { 
+          lat: posOfUser.lat, lng: posOfUser.lng 
+      },
+      {
+        // mark the object as volatile for the smooth dragging
+        volatility: true,
+      }
+    );
+  }
   // ensure that the marker can receive drag events
   marker.draggable = true;
   map.addObject(marker);
