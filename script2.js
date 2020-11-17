@@ -2,7 +2,26 @@
 var AUTOCOMPLETION_URL = 'https://autocomplete.geocoder.ls.hereapi.com/6.2/suggest.json',
     ajaxRequest = new XMLHttpRequest(),
     query = '';
+/**
+ * If the text in the text box  has changed, and is not empty,
+ * send a geocoding auto-completion request to the server.
+ *
+ * @param {Object} textB the textBox DOM object linked to this event
+ * @param {Object} ev the DOM event which fired this listener
+ */
 
+    function clearSuggestions(textB,ev)
+    {
+        if(textB.value.length==0)
+        {
+            while(textB.firstChild)
+            {
+                textB.removeChild(textB.firstChild);
+            }
+            clearOldSuggestions();
+        }
+        return;
+    }
 /**
  * If the text in the text box  has changed, and is not empty,
  * send a geocoding auto-completion request to the server.
@@ -14,12 +33,6 @@ function autoCompleteListener(textBox, event) {
 
     if (query != textBox.value){
         if (textBox.value.length >= 1){
-
-            /**
-             * A full list of available request parameters can be found in the Geocoder Autocompletion
-             * API documentation.
-             *
-             */
             var params = '?' +
                 'query=' +  encodeURIComponent(textBox.value) +   // The search text which is the basis of the query
                 '&beginHighlight=' + encodeURIComponent('<mark>') + //  Mark the beginning of the match in a token.
@@ -29,6 +42,9 @@ function autoCompleteListener(textBox, event) {
                 '&apikey=' + APIKEY;
             ajaxRequest.open('GET', AUTOCOMPLETION_URL + params );
             ajaxRequest.send();
+        }
+        else{
+            clearOldSuggestions();
         }
     }
     query = textBox.value;

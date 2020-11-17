@@ -1,6 +1,15 @@
+
+
+
 var dataTodisplay;
 
 var markers = [];
+var suggestionMarkers = [];
+
+var draggableMarkerLocation = {
+  lng:null,
+  lat:null
+}
 
 var northWestDelhi =
   '<svg width="300" height="200" ' +
@@ -123,6 +132,7 @@ function locateOnMap(latitude, longitude, category) {
         {
             try{
             map.removeObject(markers[i]);
+
             }
             catch(error){
                 console.log(error);
@@ -139,11 +149,28 @@ function locateOnMap(latitude, longitude, category) {
     '<circle cx="50" cy="100" r="10" ' +
     'fill="#7CECE3" />' +
     '</svg>';
-  var icon = new H.map.Icon(svgMarkup),
-    coords = { lat: latitude, lng: longitude },
+  var icon = new H.map.Icon(svgMarkup);
+  var  coords = { lat: latitude, lng: longitude };
     marker = new H.map.Marker(coords, { icon: icon });
   map.addObject(marker);
+  map.setCenter({lat:latitude, lng:longitude});
+  map.setZoom(10);
   //   map.removeObject(marker);
+  var router = platform.getRoutingService(null, 8),
+      routeRequestParams = {
+        routingMode: 'fast',
+        transportMode: 'car',
+        origin: toString(latitude)+','+toString(longitude), // Brandenburg Gate
+        destination: toString(draggableMarkerLocation.lng)+','+toString(draggableMarkerLocation.lat),  // Friedrichstraße Railway Station
+        return: 'polyline,turnByTurnActions,actions,instructions,travelSummary'
+      };
+
+
+  router.calculateRoute(
+    routeRequestParams,
+    onSuccess,
+    onError
+  );
   markers.push(marker);
 }
 
@@ -161,6 +188,7 @@ function markPoints(latitude, longitude, category) {
   var icon = new H.map.Icon(svgMarkup),
     coords = { lat: latitude, lng: longitude },
     marker = new H.map.Marker(coords, { icon: icon });
+  
   map.addObject(marker);
   markers.push(marker);
 }
@@ -479,6 +507,7 @@ function addDraggableMarker(map, behavior) {
   else
   {
     var marker = new H.map.Marker(
+
       { 
           lat: posOfUser.lat, lng: posOfUser.lng 
       },
@@ -538,6 +567,9 @@ function addDraggableMarker(map, behavior) {
     'dragend',
     function (ev) {
       let target = ev.target;
+      console.log(ev.target.getData());
+
+      
       // check whether event target is a marker
       // console.log(ev);
 
@@ -560,6 +592,8 @@ function addDraggableMarker(map, behavior) {
       posOfUser.lat = capturedLat;
       posOfUser.long = capturedLng;
       posOfUser.locationEnabled = true;
+      draggableMarkerLocation.lat = capturedLat;
+      draggableMarkerLocation.lng = capturedLng;
     //   clearOutTheSuggestions('results');
       if (target instanceof H.map.Marker) {
         // re-enable the default draggability of the underlying map
@@ -725,13 +759,15 @@ function addSuggestionsToMap(response){
             var marker,
                 locations = result.Response.View[0].Result,
                 i;
+                console.log(result);
 
             // Add a marker for each location found
             for (i = 0; i < locations.length; i++) {
                 marker = new H.map.Marker({
                     lat : locations[i].Location.DisplayPosition.Latitude,
                     lng : locations[i].Location.DisplayPosition.Longitude
-                });
+    
+             });
                 marker.setData(locations[i].Location.Address.Label);
                 group.addObject(marker);
             }
@@ -798,6 +834,20 @@ function clearOldSuggestions(){
  * @param {Object} response
  */
 function addSuggestionsToPanel(response){
+
+  if(suggestionMarkers.length>0)
+    {
+        for(var i = 0;i<suggestionMarkers.length;i++)
+        {
+            try{
+            map.removeObject(suggestionMarkers[i]);
+            }
+            catch(error){
+                console.log(error);
+            }
+        }
+        suggestionMarkers = [];
+    }
     let result = response.suggestions;
     console.log(result);
     var panel = document.getElementById('autoSuggest');
@@ -813,8 +863,47 @@ function addSuggestionsToPanel(response){
         var para = document.createElement("p");
         para.innerText = stringToParse;
          panel.appendChild(para);
+         try{
+          para.setAttribute("onclick","Locate('"+result[i].locationId+"')");
+        }
+        catch(err){
+          console.log(err);
+        }
      }
 }
+
+ Locate = async (locationId) =>
+ {
+   
+   var url = 'https://geocoder.ls.hereapi.com/6.2/geocode.json?locationid='+ locationId +'&jsonattributes=1&gen=9&apiKey=Yd-fnbk9FQ9yAsp35VV5rXMlCnMVJTS4eBk2f3wIkns';
+   var resp;
+   try{
+      var response = await fetch(url,{method:'GET'});
+      resp = await response.json();
+   }
+   catch{
+     alert("Could not load suggestion Locater");
+     return;
+   }
+
+   var svgMarkup =
+   '<svg width="100" height="200" ' +
+   'xmlns="http://www.w3.org/2000/svg">' +
+   '<polygon points="25,80 50,170 75,80" class="triangle" fill="yellow"/>' +
+   '<circle cx="50" cy="100" r="24" ' +
+   'fill="pink" />' +
+   '<circle cx="50" cy="100" r="10" ' +
+   'fill="#7CECE3" />' +
+   '</svg>';
+  var icon = new H.map.Icon(svgMarkup);
+ var  coords = { lat: 58.2, lng: 20.4 };
+  var marker = new H.map.Marker(coords, { icon: icon });
+ map.addObject(marker);
+ map.setCenter({lat:58.2, lng:20.4});
+ map.setZoom(5);
+ suggestionMarkers.push(marker);
+ return;
+ }
 
 
 
@@ -825,3 +914,267 @@ content  += '<br/><strong>Response:</strong><br/>';
 content  += '<div style="margin-left:5%; margin-right:5%;"><pre style="max-height:235px"><code  id="suggestions" style="font-size: small;">' +'{}' + '</code></pre></div>';
 
 // suggestionsContainer.innerHTML = content;
+
+
+// function addInfoBubble(map) {
+//   var group = new H.map.Group();
+
+//   map.addObject(group);
+
+//   // add 'tap' event listener, that opens info bubble, to the group
+//   group.addEventListener('tap', function (evt) {
+//     // event target is the marker itself, group is a parent event target
+//     // for all objects that it contains
+//     var bubble =  new H.ui.InfoBubble(evt.target.getGeometry(), {
+//       // read custom data
+//       content: evt.target.getData()
+//     });
+//   }, false);
+
+
+// }
+
+
+function calculateRouteFromAtoB (platform) {
+  var router = platform.getRoutingService(null, 8),
+      routeRequestParams = {
+        routingMode: 'fast',
+        transportMode: 'car',
+        origin: '52.5160,13.3779', // Brandenburg Gate
+        destination: '52.5206,13.3862',  // Friedrichstraße Railway Station
+        return: 'polyline,turnByTurnActions,actions,instructions,travelSummary'
+      };
+
+
+  router.calculateRoute(
+    routeRequestParams,
+    onSuccess,
+    onError
+  );
+}
+/**
+ * This function will be called once the Routing REST API provides a response
+ * @param  {Object} result          A JSONP object representing the calculated route
+ *
+ * see: http://developer.here.com/rest-apis/documentation/routing/topics/resource-type-calculate-route.html
+ */
+function onSuccess(result) {
+  var route = result.routes[0];
+ /*
+  * The styling of the route response on the map is entirely under the developer's control.
+  * A representitive styling can be found the full JS + HTML code of this example
+  * in the functions below:
+  */
+  addRouteShapeToMap(route);
+  addManueversToMap(route);
+  addWaypointsToPanel(route);
+  addManueversToPanel(route);
+  addSummaryToPanel(route);
+  // ... etc.
+}
+
+/**
+ * This function will be called if a communication error occurs during the JSON-P request
+ * @param  {Object} error  The error message received.
+ */
+function onError(error) {
+  alert('Can\'t reach the remote server');
+}
+
+/**
+ * Boilerplate map initialization code starts below:
+ */
+
+// set up containers for the map  + panel
+var mapContainer = document.getElementById('map'),
+  routeInstructionsContainer = document.getElementById('panel');
+
+//Step 1: initialize communication with the platform
+// In your own code, replace variable window.apikey with your own apikey
+
+
+// add a resize listener to make sure that the map occupies the whole container
+window.addEventListener('resize', () => map.getViewPort().resize());
+
+//Step 3: make the map interactive
+// MapEvents enables the event system
+// Behavior implements default interactions for pan/zoom (also on mobile touch environments)
+var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+
+// Create the default UI components
+var ui = H.ui.UI.createDefault(map, defaultLayers);
+
+// Hold a reference to any infobubble opened
+var bubble;
+
+/**
+ * Opens/Closes a infobubble
+ * @param  {H.geo.Point} position     The location on the map.
+ * @param  {String} text              The contents of the infobubble.
+ */
+function openBubble(position, text){
+ if(!bubble){
+    bubble =  new H.ui.InfoBubble(
+      position,
+      // The FO property holds the province name.
+      {content: text});
+    ui.addBubble(bubble);
+  } else {
+    bubble.setPosition(position);
+    bubble.setContent(text);
+    bubble.open();
+  }
+}
+
+
+/**
+ * Creates a H.map.Polyline from the shape of the route and adds it to the map.
+ * @param {Object} route A route as received from the H.service.RoutingService
+ */
+function addRouteShapeToMap(route){
+  route.sections.forEach((section) => {
+    // decode LineString from the flexible polyline
+    let linestring = H.geo.LineString.fromFlexiblePolyline(section.polyline);
+
+    // Create a polyline to display the route:
+    let polyline = new H.map.Polyline(linestring, {
+      style: {
+        lineWidth: 4,
+        strokeColor: 'rgba(0, 128, 255, 0.7)'
+      }
+    });
+
+    // Add the polyline to the map
+    map.addObject(polyline);
+    // And zoom to its bounding rectangle
+    map.getViewModel().setLookAtData({
+      bounds: polyline.getBoundingBox()
+    });
+  });
+}
+
+
+/**
+ * Creates a series of H.map.Marker points from the route and adds them to the map.
+ * @param {Object} route  A route as received from the H.service.RoutingService
+ */
+function addManueversToMap(route){
+  var svgMarkup = '<svg width="18" height="18" ' +
+    'xmlns="http://www.w3.org/2000/svg">' +
+    '<circle cx="8" cy="8" r="8" ' +
+      'fill="#1b468d" stroke="white" stroke-width="1"  />' +
+    '</svg>',
+    dotIcon = new H.map.Icon(svgMarkup, {anchor: {x:8, y:8}}),
+    group = new  H.map.Group(),
+    i,
+    j;
+  route.sections.forEach((section) => {
+    let poly = H.geo.LineString.fromFlexiblePolyline(section.polyline).getLatLngAltArray();
+
+    let actions = section.actions;
+    // Add a marker for each maneuver
+    for (i = 0;  i < actions.length; i += 1) {
+      let action = actions[i];
+      var marker =  new H.map.Marker({
+        lat: poly[action.offset * 3],
+        lng: poly[action.offset * 3 + 1]},
+        {icon: dotIcon});
+      marker.instruction = action.instruction;
+      group.addObject(marker);
+    }
+
+    group.addEventListener('tap', function (evt) {
+      map.setCenter(evt.target.getGeometry());
+      openBubble(
+         evt.target.getGeometry(), evt.target.instruction);
+    }, false);
+
+    // Add the maneuvers group to the map
+    map.addObject(group);
+  });
+}
+
+
+/**
+ * Creates a series of H.map.Marker points from the route and adds them to the map.
+ * @param {Object} route  A route as received from the H.service.RoutingService
+ */
+function addWaypointsToPanel(route) {
+  var nodeH3 = document.createElement('h3'),
+      labels = [];
+
+  route.sections.forEach((section) => {
+    labels.push(
+      section.turnByTurnActions[0].nextRoad.name[0].value)
+    labels.push(
+      section.turnByTurnActions[section.turnByTurnActions.length - 1].currentRoad.name[0].value)
+  });
+  
+  nodeH3.textContent = labels.join(' - ');
+  routeInstructionsContainer.innerHTML = '';
+  routeInstructionsContainer.appendChild(nodeH3);
+}
+
+/**
+ * Creates a series of H.map.Marker points from the route and adds them to the map.
+ * @param {Object} route  A route as received from the H.service.RoutingService
+ */
+function addSummaryToPanel(route){
+  let duration = 0,
+      distance = 0;
+
+  route.sections.forEach((section) => {
+    distance += section.travelSummary.length;
+    duration += section.travelSummary.duration;
+  });
+
+  var summaryDiv = document.createElement('div'),
+   content = '';
+   content += '<b>Total distance</b>: ' + distance  + 'm. <br/>';
+   content += '<b>Travel Time</b>: ' + duration.toMMSS() + ' (in current traffic)';
+
+
+  summaryDiv.style.fontSize = 'small';
+  summaryDiv.style.marginLeft ='5%';
+  summaryDiv.style.marginRight ='5%';
+  summaryDiv.innerHTML = content;
+  routeInstructionsContainer.appendChild(summaryDiv);
+}
+
+/**
+ * Creates a series of H.map.Marker points from the route and adds them to the map.
+ * @param {Object} route  A route as received from the H.service.RoutingService
+ */
+function addManueversToPanel(route){
+  var nodeOL = document.createElement('ol');
+
+  nodeOL.style.fontSize = 'small';
+  nodeOL.style.marginLeft ='5%';
+  nodeOL.style.marginRight ='5%';
+  nodeOL.className = 'directions';
+
+  route.sections.forEach((section) => {
+    section.actions.forEach((action, idx) => {
+      var li = document.createElement('li'),
+          spanArrow = document.createElement('span'),
+          spanInstruction = document.createElement('span');
+
+      spanArrow.className = 'arrow ' + (action.direction || '') + action.action;
+      spanInstruction.innerHTML = section.actions[idx].instruction;
+      li.appendChild(spanArrow);
+      li.appendChild(spanInstruction);
+
+      nodeOL.appendChild(li);
+    });
+  });
+
+  routeInstructionsContainer.appendChild(nodeOL);
+}
+
+
+Number.prototype.toMMSS = function () {
+  return  Math.floor(this / 60)  +' minutes '+ (this % 60)  + ' seconds.';
+}
+
+// Now use the map as required...
+calculateRouteFromAtoB (platform);
