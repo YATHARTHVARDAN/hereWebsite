@@ -270,7 +270,7 @@ searchForm.onsubmit = async (e) => {
   e.preventDefault();
   clearOutTheSuggestions('results');
   getRequest = '';
-  res = document.getElementById('searchText').value.split(' ');
+  res = document.getElementById('inp').value.split(' ');
   for (i = 0; i < res.length - 1; i++) {
     getRequest += res[i];
     getRequest += '%2';
