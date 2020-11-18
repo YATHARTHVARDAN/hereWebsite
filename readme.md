@@ -7,4 +7,4 @@ Technology, language and tools used: HTML, CSS, Vanilla Js. Backend- python (fea
 Video for the same is provided below :
 https://drive.google.com/file/d/1xfmI7YEZxhl3iM5MIaUchL4aYYNJCAno/view?usp=drivesdk
 
-<h3 style="text-align:center">Made By YATHARTH VARDAN ,NITIN DHEMIWAL and <i>AKSHITA CHANDER</i> in coordination withe HERE Technologies &copy;</h3> 
+<h3 style="text-align:center">Made By <i>YATHARTH VARDAN</i> ,<i>NITIN DHEMIWAL</i> and <i>AKSHITA CHANDER</i> in coordination withe HERE Technologies &copy;</h3> 
