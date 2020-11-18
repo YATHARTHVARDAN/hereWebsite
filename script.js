@@ -896,10 +896,11 @@ function addSuggestionsToPanel(response){
    'fill="#7CECE3" />' +
    '</svg>';
   var icon = new H.map.Icon(svgMarkup);
- var  coords = { lat: 58.2, lng: 20.4 };
+
+ var  coords = { lat: resp.response.view[0].result[0].location.displayPosition.latitude, lng: resp.response.view[0].result[0].location.displayPosition.longitude };
   var marker = new H.map.Marker(coords, { icon: icon });
  map.addObject(marker);
- map.setCenter({lat:58.2, lng:20.4});
+ map.setCenter({lat:resp.response.view[0].result[0].location.displayPosition.latitude, lng:resp.response.view[0].result[0].location.displayPosition.longitude});
  map.setZoom(5);
  suggestionMarkers.push(marker);
  return;
